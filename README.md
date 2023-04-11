@@ -5,3 +5,7 @@ A simple app I made after seeing this [video](https://www.youtube.com/watch?v=kb
 ## Installation
 
 The only requirement is having Visual Studio installed on your computer. Clone the project and then run it.
+
+## Usage 
+
+Choose a triangle and a random point. The app wil begging drawing the figure. Use Space to pause/unpause or the Red Button to reset the app.
