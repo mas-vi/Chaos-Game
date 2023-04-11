@@ -10,4 +10,4 @@ The only requirement is having Visual Studio installed on your computer. Clone t
 
 Choose a triangle and a random point. The app wil begging drawing the figure. Use Space to pause/unpause or the Red Button to reset the app.
 
-![Picture of a Sierpiński triangle generated using this app](https://ibb.co/NCRv4PR)
+![Picture of a Sierpiński triangle generated using this app](https://i.ibb.co/6wQMdxQ/Screenshot-16.png)
