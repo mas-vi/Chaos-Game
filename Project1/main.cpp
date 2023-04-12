@@ -3,105 +3,102 @@
 #include "constants.hpp"
 #include "functions.hpp"
 
-
-
-
-
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_NAME.c_str(),sf::Style::Close);
-    
+    // Create the window
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_NAME, sf::Style::Close);
     window.setFramerateLimit(120);
 
-    sf::RectangleShape main;
+    // Create the main rectangle
+    sf::RectangleShape mainRect(sf::Vector2f(MAIN_WIDTH, MAIN_HEIGHT));
+    mainRect.setPosition(MAIN_POSITION_X, MAIN_POSITION_Y);
+    mainRect.setFillColor(sf::Color::White);
 
-    main.setSize(sf::Vector2f(MAIN_WIDTH,MAIN_HEIGHT));
-
-    main.setPosition(sf::Vector2f(MAIN_POSITION_X, MAIN_POSITION_Y));
-
-    main.setFillColor(sf::Color::White);
-
+    // Create the vertices array
     sf::VertexArray vertices(sf::Points);
 
-    fn::Button reset_button(sf::Vector2f(RESET_BUTTON_DIM, RESET_BUTTON_DIM),
-        sf::Vector2f(RESET_BUTTON_POSITION_X,RESET_BUTTON_POSITION_Y),sf::Color::Red);
+    // Create the reset button
+    fn::Button resetButton(sf::Vector2f(RESET_BUTTON_DIM, RESET_BUTTON_DIM), sf::Vector2f(RESET_BUTTON_POSITION_X, RESET_BUTTON_POSITION_Y), sf::Color::Red);
 
+    // Initialize play state
     bool play = false;
-    
-    
- 
 
-
-    
     while (window.isOpen())
     {
-        
+        // Handle events
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
-            if (event.type == event.KeyPressed)
+            switch (event.type)
             {
-                switch (event.key.code)
-                {
-                case sf::Keyboard::Escape:
+                // Window closed
+                case sf::Event::Closed:
                     window.close();
                     break;
-                case sf::Keyboard::Space:
-                    play = !play;
-                    break;
 
-                default:
-                    break;
-                }
-
-            }
-            
-            if (event.type == sf::Event::MouseButtonPressed)
-            {
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    if (fn::cursorInRectangle(main, window) && vertices.getVertexCount() < numberOfInitialPoints)
+                // Key pressed
+                case sf::Event::KeyPressed:
+                    switch (event.key.code)
                     {
-                        vertices.append(fn::choosePoint(window));
-                        if (vertices.getVertexCount() == numberOfInitialPoints)
+                        // Escape key pressed
+                        case sf::Keyboard::Escape:
+                            window.close();
+                            break;
+
+                        // Space key pressed
+                        case sf::Keyboard::Space:
+                            play = !play;
+                            break;
+
+                        // Default case
+                        default:
+                            break;
+                    }
+                    break;
+
+                // Mouse button pressed
+                case sf::Event::MouseButtonPressed:
+                    // Left button pressed
+                    if (event.mouseButton.button == sf::Mouse::Left)
+                    {
+                        // Add point to vertices array
+                        if (fn::cursorInRectangle(mainRect, window) && vertices.getVertexCount() < numberOfInitialPoints)
                         {
-                            vertices[static_cast<size_t>(numberOfInitialPoints) - 1].color = sf::Color::Red;
-                            play = true;
+                            vertices.append(fn::choosePoint(window));
+                            if (vertices.getVertexCount() == numberOfInitialPoints)
+                            {
+                                vertices[numberOfInitialPoints - 1].color = sf::Color::Red;
+                                play = true;
+                            }
+                        }
+
+                        // Reset button pressed
+                        if (resetButton.isHovered(window))
+                        {
+                            play = false;
+                            vertices.clear();
                         }
                     }
-                    if (reset_button.isHovered(window))
-                    {
-                        play = false;
-                        vertices.clear();
+                    break;
 
-                    }
-                    
-                }
-
+                // Default case
+                default:
+                    break;
             }
-            
         }
-        
-       
-        if (vertices.getVertexCount() >=numberOfInitialPoints && play)
+
+        // Generate vertices if enough points exist and play is true
+        if (vertices.getVertexCount() >= numberOfInitialPoints && play)
         {
             fn::generate(vertices);
         }
-        
-        
-        
 
+        // Draw objects to the window
         window.clear(sf::Color::Black);
         glPointSize(2);
-
-        window.draw(main);
-        window.draw(reset_button.getShape());
+        window.draw(mainRect);
+        window.draw(resetButton.getShape());
         window.draw(vertices);
-        
-
-
         window.display();
     }
 
